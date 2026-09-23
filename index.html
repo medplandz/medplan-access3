@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MedPlan — Accès Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  :root {
+    --sage: #8A9A6A;
+    --sage-dark: #4A5A3A;
+    --sage-light: #C5D0B0;
+    --cream: #F0EDE4;
+    --black: #1A1A1A;
+    --grey: #6B6B6B;
+    --grey-light: #E8E5DC;
+    --white: #FFFFFF;
+    --error: #C0392B;
+    --success: #2E7D32;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  *, *::before, *::after { box-sizing: inherit; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--cream);
+    font-family: 'Raleway', sans-serif;
+    color: var(--black);
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* Logo area */
+  .brand {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .brand-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--black);
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .brand-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: var(--cream);
+  }
+
+  .brand-name {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    color: var(--black);
+  }
+
+  .brand-sub {
+    font-size: 12px;
+    color: var(--grey);
+    margin-top: 4px;
+    letter-spacing: 0.03em;
+  }
+
+  /* Card */
+  .card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow: 0 2px 24px rgba(26,26,26,0.07);
+  }
+
+  .card-title {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--black);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    color: var(--grey);
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  /* Form */
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sage-dark);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  input[type="email"],
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid var(--grey-light);
+    border-radius: 10px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 15px;
+    color: var(--black);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input[type="email"]:focus,
+  input[type="text"]:focus {
+    border-color: var(--sage);
+    background: var(--white);
+  }
+
+  /* OTP input */
+  .otp-wrapper {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .otp-digit {
+    width: 52px;
+    height: 60px;
+    border: 1.5px solid var(--grey-light);
+    border-radius: 10px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--black);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .otp-digit:focus {
+    border-color: var(--sage);
+    background: var(--white);
+  }
+
+  .otp-digit.filled {
+    border-color: var(--sage);
+    background: var(--white);
+  }
+
+  /* Button */
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 20px;
+  }
+
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-primary {
+    background: var(--black);
+    color: var(--cream);
+  }
+
+  .btn-primary:hover:not(:disabled) { opacity: 0.88; }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--sage-dark);
+    border: 1.5px solid var(--sage-light);
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  /* Messages */
+  .msg {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    display: none;
+  }
+
+  .msg.show { display: block; }
+  .msg.error { background: #FDECEA; color: var(--error); border: 1px solid #F5C6C3; }
+  .msg.success { background: #E8F5E9; color: var(--success); border: 1px solid #C8E6C9; }
+  .msg.info { background: #EEF2E6; color: var(--sage-dark); border: 1px solid var(--sage-light); }
+
+  /* Resend */
+  .resend-area {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--grey);
+  }
+
+  .resend-link {
+    color: var(--sage-dark);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+  }
+
+  /* Steps */
+  .step { display: none; }
+  .step.active { display: block; }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(240,237,228,0.4);
+    border-top-color: var(--cream);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--grey);
+  }
+
+  .footer a {
+    color: var(--sage-dark);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* Admin panel */
+  .admin-toggle {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .admin-link {
+    font-size: 13px;
+    color: var(--grey);
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--grey-light);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-family: 'Raleway', sans-serif;
+  }
+
+  .admin-panel {
+    display: none;
+    margin-top: 20px;
+    background: var(--white);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 24px rgba(26,26,26,0.07);
+  }
+
+  .admin-panel.show { display: block; }
+
+  .admin-title {
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--black);
+    margin-bottom: 16px;
+  }
+
+  .email-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+  }
+
+  .email-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--grey-light);
+    font-size: 13px;
+  }
+
+  .email-item:last-child { border-bottom: none; }
+
+  .email-item span { color: var(--black); }
+
+  .email-item-date {
+    color: var(--grey);
+    font-size: 11px;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    color: var(--error);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    line-height: 1;
+  }
+
+  .empty-list {
+    text-align: center;
+    color: var(--grey);
+    font-size: 13px;
+    padding: 20px 0;
+  }
+
+  @media (max-width: 380px) {
+    .card { padding: 28px 20px; }
+    .otp-digit { width: 44px; height: 54px; font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>
+      </svg>
+    </div>
+    <div class="brand-name">MEDPLAN</div>
+    <div class="brand-sub">Notion & Digital Planner</div>
+  </div>
+
+  <!-- Card -->
+  <div class="card">
+
+    <!-- Step 1: Email -->
+    <div class="step active" id="step-email">
+      <div class="card-title">Accède à ton template</div>
+      <div class="card-desc">Entre ton email pour recevoir ton code d'accès.</div>
+
+      <label for="email-input">Ton email</label>
+      <input type="email" id="email-input" placeholder="exemple@gmail.com" autocomplete="email" inputmode="email">
+
+      <div class="msg" id="email-msg"></div>
+
+      <button class="btn btn-primary" id="send-otp-btn" onclick="sendOTP()">
+        Envoyer le code
+      </button>
+    </div>
+
+    <!-- Step 2: OTP -->
+    <div class="step" id="step-otp">
+      <div class="card-title">Vérifie ton email</div>
+      <div class="card-desc" id="otp-desc">On a envoyé un code à 6 chiffres à ton adresse email.</div>
+
+      <label>Code de vérification</label>
+      <div class="otp-wrapper" id="otp-wrapper">
+        <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+        <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]">
+      </div>
+
+      <div class="msg" id="otp-msg"></div>
+
+      <button class="btn btn-primary" id="verify-btn" onclick="verifyOTP()">
+        Accéder au template
+      </button>
+
+      <div class="resend-area">
+        Tu n'as pas reçu le code ?
+        <button class="resend-link" id="resend-btn" onclick="resendOTP()">Renvoyer</button>
+      </div>
+
+      <button class="btn btn-secondary" onclick="goBack()">← Changer d'email</button>
+    </div>
+
+    <!-- Step 3: Success -->
+    <div class="step" id="step-success">
+      <div style="text-align:center; padding: 8px 0 16px;">
+        <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+        <div class="card-title" style="text-align:center;">Accès accordé !</div>
+        <div class="card-desc" style="text-align:center; margin-top: 8px;">Ton template MedMap est prêt. Clique sur "Dupliquer" pour l'ajouter à ton Notion.</div>
+      </div>
+      <button class="btn btn-primary" onclick="openTemplate()">Ouvrir mon MedMap →</button>
+    </div>
+
+    <!-- Step 4: Denied -->
+    <div class="step" id="step-denied">
+      <div style="text-align:center; padding: 8px 0 16px;">
+        <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
+        <div class="card-title" style="text-align:center;">Accès refusé</div>
+        <div class="card-desc" style="text-align:center; margin-top: 8px;">Cet email n'est pas dans notre liste d'acheteurs. Si tu penses que c'est une erreur, contacte-nous sur Instagram.</div>
+      </div>
+      <button class="btn btn-secondary" onclick="goBack()">← Réessayer avec un autre email</button>
+      <div style="text-align:center; margin-top: 16px;">
+        <a href="https://instagram.com/medplan.notion" style="font-size:13px; color: var(--sage-dark); font-weight:600;">@medplan.notion</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Admin toggle -->
+  <div class="admin-toggle">
+    <button class="admin-link" onclick="toggleAdmin()">⚙ Admin</button>
+  </div>
+
+  <!-- Admin panel -->
+  <div class="admin-panel" id="admin-panel">
+    <div class="admin-title">🔑 Gestion des accès</div>
+
+    <div id="admin-auth" style="display:block;">
+      <label for="admin-pass">Mot de passe admin</label>
+      <input type="text" id="admin-pass" placeholder="Ton mot de passe secret">
+      <button class="btn btn-primary" style="margin-top:12px;" onclick="adminLogin()">Entrer</button>
+      <div class="msg" id="admin-msg"></div>
+    </div>
+
+    <div id="admin-content" style="display:none;">
+      <label for="new-email">Ajouter un acheteur</label>
+      <div style="display:flex; gap:8px; margin-bottom:16px;">
+        <input type="email" id="new-email" placeholder="email@exemple.com" style="flex:1;">
+        <button class="btn btn-primary" style="width:auto; margin-top:0; padding: 14px 16px;" onclick="addEmail()">+</button>
+      </div>
+      <div class="msg" id="add-msg"></div>
+
+      <div style="font-size:12px; font-weight:600; color:var(--sage-dark); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:8px;">Acheteurs enregistrés</div>
+      <div class="email-list" id="email-list">
+        <div class="empty-list">Chargement...</div>
+      </div>
+
+      <button class="btn btn-secondary" style="margin-top:4px;" onclick="adminLogout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    Problème ? <a href="https://instagram.com/medplan.notion" target="_blank">@medplan.notion</a>
+  </div>
+
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────
+const NOTION_LINK = "https://app.notion.com/p/MedMap-2nd-Year-Medical-Student-Planner-3af852c333e280639668d696cba67d7f?source=copy_link";
+const ADMIN_PASSWORD = "MedPlan2026!";
+const OTP_EXPIRY_MS = 10 * 60 * 1000;
+const STORAGE_KEY = "medplan_buyers";
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbzImOEcyu98IKJu30M7_jZGneO7t7iCbggZiqW9R6t_D7IqyP90fvGTkZeHXk4SL0ufRA/exec";
+
+// ─── STATE ────────────────────────────────────────────────
+let currentEmail = "";
+let currentOTP = "";
+let otpTimestamp = 0;
+let adminLoggedIn = false;
+
+// ─── LOCALSTORAGE HELPERS (admin panel only) ──────────────
+function getBuyers() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch(e) { return []; }
+}
+
+function saveBuyers(buyers) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(buyers));
+  } catch(e) {}
+}
+
+// ─── CHECK EMAIL VIA GOOGLE SHEETS ────────────────────────
+async function isEmailAuthorized(email) {
+  try {
+    const res = await fetch(`${SHEETS_URL}?email=${encodeURIComponent(email)}`);
+    const data = await res.json();
+    return data.authorized === true;
+  } catch(e) {
+    // Fallback to localStorage if fetch fails
+    const buyers = getBuyers();
+    return buyers.some(b => b.email === email.toLowerCase().trim());
+  }
+}
+
+// ─── OTP GENERATION ───────────────────────────────────────
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// ─── SEND OTP ─────────────────────────────────────────────
+async function sendOTP() {
+  const emailInput = document.getElementById("email-input");
+  const email = emailInput.value.trim().toLowerCase();
+  const btn = document.getElementById("send-otp-btn");
+  const msg = document.getElementById("email-msg");
+
+  // Validate email
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showMsg("email-msg", "error", "Entre un email valide.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Vérification...';
+  hideMsg("email-msg");
+
+  const authorized = await isEmailAuthorized(email);
+  if (!authorized) {
+    btn.disabled = false;
+    btn.innerHTML = "Envoyer le code";
+    goToStep("step-denied");
+    return;
+  }
+
+  // Generate OTP
+  currentOTP = generateOTP();
+  currentEmail = email;
+  otpTimestamp = Date.now();
+
+  btn.innerHTML = '<span class="spinner"></span>Envoi du code...';
+
+  const sent = await sendEmailOTP(email, currentOTP);
+
+  btn.disabled = false;
+  btn.innerHTML = "Envoyer le code";
+
+  if (sent) {
+    document.getElementById("otp-desc").textContent = `Code envoyé à ${email}`;
+    goToStep("step-otp");
+    setupOTPInputs();
+    setTimeout(() => {
+      const firstDigit = document.querySelector(".otp-digit");
+      if (firstDigit) firstDigit.focus();
+    }, 100);
+  } else {
+    showMsg("email-msg", "error", "Erreur lors de l'envoi. Réessaie.");
+  }
+}
+
+// ─── EMAIL SEND (EmailJS) ─────────────────────────────────
+async function sendEmailOTP(email, otp) {
+  // Using EmailJS public API
+  // User needs to set up EmailJS account and replace these values
+  const SERVICE_ID = "service_3tx8zgc";
+  const TEMPLATE_ID = "template_dtuekiw";
+  const PUBLIC_KEY = "ko_rM-p1y6S8-NE6c";
+
+  try {
+    await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+      email: email,
+      passcode: otp
+    }, PUBLIC_KEY);
+    return true;
+  } catch(e) {
+    console.error("EmailJS error:", e);
+    return false;
+  }
+}
+
+// ─── OTP INPUTS ───────────────────────────────────────────
+function setupOTPInputs() {
+  const digits = document.querySelectorAll(".otp-digit");
+  digits.forEach((input, i) => {
+    input.value = "";
+    input.classList.remove("filled");
+
+    input.addEventListener("input", (e) => {
+      const val = e.target.value.replace(/\D/g, "");
+      e.target.value = val;
+      if (val) {
+        e.target.classList.add("filled");
+        if (i < digits.length - 1) digits[i+1].focus();
+      } else {
+        e.target.classList.remove("filled");
+      }
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && i > 0) {
+        digits[i-1].focus();
+        digits[i-1].value = "";
+        digits[i-1].classList.remove("filled");
+      }
+    });
+
+    input.addEventListener("paste", (e) => {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "");
+      digits.forEach((d, j) => {
+        if (paste[j]) {
+          d.value = paste[j];
+          d.classList.add("filled");
+        }
+      });
+      digits[Math.min(paste.length, digits.length - 1)].focus();
+    });
+  });
+}
+
+function getOTPValue() {
+  return Array.from(document.querySelectorAll(".otp-digit")).map(d => d.value).join("");
+}
+
+// ─── VERIFY OTP ───────────────────────────────────────────
+async function verifyOTP() {
+  const entered = getOTPValue();
+  const btn = document.getElementById("verify-btn");
+
+  if (entered.length !== 6) {
+    showMsg("otp-msg", "error", "Entre les 6 chiffres du code.");
+    return;
+  }
+
+  // Check expiry
+  if (Date.now() - otpTimestamp > OTP_EXPIRY_MS) {
+    showMsg("otp-msg", "error", "Ce code a expiré. Demandes-en un nouveau.");
+    return;
+  }
+
+  // Check OTP
+  if (entered !== currentOTP) {
+    showMsg("otp-msg", "error", "Code incorrect. Vérifie ton email.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Accès en cours...';
+
+  setTimeout(() => {
+    goToStep("step-success");
+  }, 600);
+}
+
+// ─── OPEN TEMPLATE ────────────────────────────────────────
+function openTemplate() {
+  window.open(NOTION_LINK, "_blank");
+}
+
+// ─── RESEND OTP ───────────────────────────────────────────
+async function resendOTP() {
+  currentOTP = generateOTP();
+  otpTimestamp = Date.now();
+  hideMsg("otp-msg");
+
+  const btn = document.getElementById("resend-btn");
+  btn.disabled = true;
+  btn.textContent = "Envoi...";
+
+  await sendEmailOTP(currentEmail, currentOTP);
+
+  btn.textContent = "Renvoyé ✓";
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = "Renvoyer";
+  }, 30000);
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────
+function goToStep(stepId) {
+  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+  document.getElementById(stepId).classList.add("active");
+}
+
+function goBack() {
+  hideMsg("email-msg");
+  hideMsg("otp-msg");
+  goToStep("step-email");
+}
+
+// ─── MESSAGES ─────────────────────────────────────────────
+function showMsg(id, type, text) {
+  const el = document.getElementById(id);
+  el.className = `msg ${type} show`;
+  el.textContent = text;
+}
+
+function hideMsg(id) {
+  const el = document.getElementById(id);
+  el.className = "msg";
+  el.textContent = "";
+}
+
+// ─── ADMIN ────────────────────────────────────────────────
+function toggleAdmin() {
+  const panel = document.getElementById("admin-panel");
+  panel.classList.toggle("show");
+}
+
+async function adminLogin() {
+  const pass = document.getElementById("admin-pass").value;
+  if (pass !== ADMIN_PASSWORD) {
+    showMsg("admin-msg", "error", "Mot de passe incorrect.");
+    return;
+  }
+  adminLoggedIn = true;
+  document.getElementById("admin-auth").style.display = "none";
+  document.getElementById("admin-content").style.display = "block";
+  loadEmailList();
+}
+
+function adminLogout() {
+  adminLoggedIn = false;
+  document.getElementById("admin-auth").style.display = "block";
+  document.getElementById("admin-content").style.display = "none";
+  document.getElementById("admin-pass").value = "";
+}
+
+async function loadEmailList() {
+  const buyers = getBuyers();
+  const list = document.getElementById("email-list");
+
+  if (buyers.length === 0) {
+    list.innerHTML = '<div class="empty-list">Aucun acheteur enregistré.</div>';
+    return;
+  }
+
+  list.innerHTML = "";
+  buyers.forEach((b, i) => {
+    const item = document.createElement("div");
+    item.className = "email-item";
+    item.innerHTML = `
+      <div>
+        <span>${b.email}</span>
+        <div class="email-item-date">${b.addedAt || ""}</div>
+      </div>
+      <button class="remove-btn" onclick="removeEmail(${i})">✕</button>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function addEmail() {
+  if (!adminLoggedIn) return;
+
+  const input = document.getElementById("new-email");
+  const email = input.value.trim().toLowerCase();
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showMsg("add-msg", "error", "Email invalide.");
+    return;
+  }
+
+  const buyers = getBuyers();
+
+  if (buyers.some(b => b.email === email)) {
+    showMsg("add-msg", "info", "Cet email est déjà enregistré.");
+    return;
+  }
+
+  buyers.push({
+    email: email,
+    addedAt: new Date().toLocaleDateString("fr-FR")
+  });
+
+  saveBuyers(buyers);
+  showMsg("add-msg", "success", "Acheteur ajouté ✓");
+  input.value = "";
+  loadEmailList();
+}
+
+function removeEmail(index) {
+  if (!adminLoggedIn) return;
+  const buyers = getBuyers();
+  buyers.splice(index, 1);
+  saveBuyers(buyers);
+  loadEmailList();
+}
+
+// ─── ENTER KEY ────────────────────────────────────────────
+document.getElementById("email-input").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendOTP();
+});
+</script>
+
+</body>
+</html>
